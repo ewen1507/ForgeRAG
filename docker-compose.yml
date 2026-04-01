@@ -20,3 +20,24 @@ services:
       - ./backend:/app
       - /app/node_modules
     command: npm run start:dev
+    depends_on:
+      - db
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://forgerag:forgerag_password@db:5432/forgerag
+
+  db:
+    image: postgres:16
+    container_name: forgerag-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forgerag
+      POSTGRES_PASSWORD: forgerag_password
+      POSTGRES_DB: forgerag
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
