@@ -1,3 +1,5 @@
+import os
+
 from openai import OpenAI
 from app.core.config import settings
 
@@ -5,10 +7,14 @@ from app.core.config import settings
 class EmbeddingService:
     def __init__(self) -> None:
         self.client = OpenAI(
-            base_url=settings.lmstudio_base_url,
-            api_key=settings.lmstudio_api_key,
+            base_url=os.getenv("OPENAI_BASE_URL", "http://host.docker.internal:1234/v1"),
+            api_key=os.getenv("OPENAI_API_KEY", "lm-studio"),
         )
-        self.model = settings.embedding_model_name
+        self.model = os.getenv(
+            "EMBEDDING_MODEL",
+            "text-embedding-nomic-embed-text-v1.5",
+        )
+
 
     def embed_query(self, text: str) -> list[float]:
         response = self.client.embeddings.create(

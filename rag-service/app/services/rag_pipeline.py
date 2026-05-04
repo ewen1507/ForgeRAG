@@ -32,7 +32,7 @@ class RagPipeline:
                 "filename": meta.get("filename", ""),
                 "source_type": meta.get("source_type", ""),
                 "text": docs[idx],
-                "score": float(distances[idx]),
+                "distance": float(distances[idx]),
             })
 
         return results

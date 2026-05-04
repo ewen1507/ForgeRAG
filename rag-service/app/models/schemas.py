@@ -26,7 +26,7 @@ class RetrievedChunk(BaseModel):
     filename: str
     source_type: str
     text: str
-    score: float
+    distance: float
 
 
 class RetrieveRequest(BaseModel):

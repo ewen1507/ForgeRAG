@@ -1,3 +1,4 @@
+import re
 from io import BytesIO
 
 from fastapi import UploadFile, HTTPException
@@ -29,6 +30,57 @@ class FileIngestionService:
         return extension
 
     @staticmethod
+    def clean_pdf_text(text: str) -> str:
+        if not text:
+            return ""
+
+        # normalisation de base
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
+
+        # répare les mots coupés en fin de ligne : docu-\nmentation -> documentation
+        text = re.sub(r"(\w)-\n(\w)", r"\1\2", text)
+
+        # remplace les sauts de ligne simples par des espaces
+        text = re.sub(r"(?<!\n)\n(?!\n)", " ", text)
+
+        # garde les paragraphes
+        text = re.sub(r"\n{3,}", "\n\n", text)
+
+        lines = []
+        for line in text.split("\n"):
+            stripped = line.strip()
+
+            if not stripped:
+                continue
+
+            # retire lignes purement numériques (souvent numéros de page)
+            if re.fullmatch(r"\d+", stripped):
+                continue
+
+            # retire patterns du style "123 Python Tutorial, Release 3.6.4"
+            if re.fullmatch(r"\d+\s+.*", stripped):
+                continue
+
+            # retire lignes très courtes en majuscules (souvent en-têtes / sections parasites)
+            if len(stripped) <= 25 and stripped.isupper():
+                continue
+
+            lines.append(stripped)
+
+        text = "\n".join(lines)
+
+        # espaces multiples
+        text = re.sub(r"[ \t]+", " ", text)
+
+        # espace avant ponctuation
+        text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+
+        # compactage final
+        text = re.sub(r"\n{3,}", "\n\n", text).strip()
+
+        return text
+
+    @staticmethod
     async def read_text_file(file: UploadFile) -> str:
         content = await file.read()
 
@@ -43,8 +95,8 @@ class FileIngestionService:
                 detail="File must be UTF-8 encoded.",
             )
 
-    @staticmethod
-    async def read_pdf_file(file: UploadFile) -> str:
+    @classmethod
+    async def read_pdf_file(cls, file: UploadFile) -> str:
         content = await file.read()
 
         if not content:
@@ -64,7 +116,9 @@ class FileIngestionService:
             page_text = page.extract_text() or ""
             page_text = page_text.strip()
             if page_text:
-                extracted_pages.append(page_text)
+                cleaned = cls.clean_pdf_text(page_text)
+                if cleaned:
+                    extracted_pages.append(cleaned)
 
         text = "\n\n".join(extracted_pages).strip()
 

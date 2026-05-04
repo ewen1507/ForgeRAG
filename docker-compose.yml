@@ -38,6 +38,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  rag-service:
+    build:
+      context: ./rag-service
+    ports:
+      - "8000:8000"
+    environment:
+      OPENAI_BASE_URL: http://host.docker.internal:1234/v1
+      OPENAI_API_KEY: lm-studio
+      EMBEDDING_MODEL: text-embedding-nomic-embed-text-v1.5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 volumes:
   postgres_data:
