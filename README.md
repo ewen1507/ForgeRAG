@@ -211,3 +211,7 @@ Fullstack Developer | AI & Cybersecurity Enthusiast
 ## 📄 License
 
 MIT License
+
+## 📸 Screenshot
+
+![ForgeRAG UI](screenshots/forge-rag-chat.png)
