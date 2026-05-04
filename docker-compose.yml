@@ -25,6 +25,12 @@ services:
     environment:
       PORT: 3000
       DATABASE_URL: postgresql://forgerag:forgerag_password@db:5432/forgerag
+      RAG_SERVICE_URL: http://rag-service:8000
+      OPENAI_BASE_URL: http://host.docker.internal:1234/v1
+      OPENAI_API_KEY: lm-studio
+      LLM_MODEL: qwen/qwen3-vl-4b
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   db:
     image: postgres:16
