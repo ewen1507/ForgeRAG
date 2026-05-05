@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Req,
   Sse,
   UseGuards,
@@ -40,5 +41,11 @@ export class RagController {
   @Sse()
   stream(@Query('question') question: string): Observable<MessageEvent> {
     return this.ragService.streamAnswer(question);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('reset')
+  async reset(@Req() req: RequestWithUser) {
+    return this.ragService.resetChroamDB(req.user);
   }
 }

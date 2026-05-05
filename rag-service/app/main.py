@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException
+import os
 
+from tempfile import NamedTemporaryFile
 from app.models.schemas import (
     GenerateRequest,
     EmbedRequest,
@@ -16,7 +17,7 @@ from app.services.chunking_service import ChunkingService
 from app.services.vector_store import VectorStore
 from app.services.rag_pipeline import RagPipeline
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, HTTPException
 from app.services.file_ingestion_service import FileIngestionService
 
 app = FastAPI(title="ForgeRAG Python Service")
@@ -107,10 +108,22 @@ async def upload_document(
         chunk_size: int = Form(800),
         chunk_overlap: int = Form(120),
 ):
-    file_ingestion_service.validate_file(file)
-    text = await file_ingestion_service.extract_text(file)
-
+    print(f"Received file: {file.filename}, document_id: {document_id}, chunk_size: {chunk_size}, chunk_overlap: {chunk_overlap}")
     try:
+        # Lire le contenu du fichier depuis la mémoire
+        content = await file.read()
+
+        print(f"File content size: {len(content)} bytes")
+
+        # Optionnel : Valider le fichier en mémoire
+        file_ingestion_service.validate_file(content, file.filename)
+
+        print("File validation passed")
+
+        # Extraire le texte du fichier (en mémoire)
+        text = await file_ingestion_service.extract_text(content, file.filename)
+
+        # Traiter le fichier (par exemple, avec un pipeline RAG)
         result = rag_pipeline.ingest_document(
             document_id=document_id,
             filename=file.filename or "unknown",
@@ -119,6 +132,11 @@ async def upload_document(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
         )
+
+        # Retourner la réponse
         return UploadDocumentResponse(**result)
+
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")

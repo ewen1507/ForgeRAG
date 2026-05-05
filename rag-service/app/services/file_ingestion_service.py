@@ -15,12 +15,11 @@ class FileIngestionService:
         return "." + filename.lower().split(".")[-1]
 
     @classmethod
-    def validate_file(cls, file: UploadFile) -> str:
-        if not file.filename:
-            raise HTTPException(status_code=400, detail="Filename is missing.")
+    def validate_file(cls, file: UploadFile, fileName) -> str:
+        if not fileName:
+                raise HTTPException(status_code=400, detail="Filename is missing.")
 
-        extension = cls.get_extension(file.filename)
-
+        extension = cls.get_extension(fileName)
         if extension not in cls.ALLOWED_EXTENSIONS:
             raise HTTPException(
                 status_code=400,
@@ -97,13 +96,14 @@ class FileIngestionService:
 
     @classmethod
     async def read_pdf_file(cls, file: UploadFile) -> str:
-        content = await file.read()
+        # content = await file.read()
 
-        if not content:
+        if not file:
             raise HTTPException(status_code=400, detail="Uploaded PDF is empty.")
 
         try:
-            reader = PdfReader(BytesIO(content))
+            print("Attempting to read PDF content...")
+            reader = PdfReader(BytesIO(file))
         except Exception as exc:
             raise HTTPException(
                 status_code=400,
@@ -131,9 +131,10 @@ class FileIngestionService:
         return text
 
     @classmethod
-    async def extract_text(cls, file: UploadFile) -> str:
-        extension = cls.validate_file(file)
+    async def extract_text(cls, file: UploadFile, fileName) -> str:
+        extension = cls.validate_file(file, fileName)
 
+        print(f"File {fileName} passed validation with extension {extension}")
         if extension in {".txt", ".md"}:
             return await cls.read_text_file(file)
 

@@ -46,6 +46,8 @@ export class RagService {
         try {
           const retrieved = await this.retrieveChunks(question, 3);
 
+          console.log('retrieved', retrieved);
+
           const context = retrieved.results
             .map((chunk, index) => {
               return `Source ${index + 1} (${chunk.filename}):\n${chunk.text}`;
@@ -60,7 +62,7 @@ Question:
 ${question}
 
 Answer in 2 or 3 clear sentences.
-Use the context, but do not copy long passages.
+Use the context, but do not copy long passages. If the context is empty or does not contain the answer, say I cannot answer this question.
 `;
 
           const stream = await this.openai.chat.completions.create({
@@ -225,5 +227,41 @@ Use the context, but do not copy long passages.
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async resetChroamDB(user: AuthenticatedUser) {
+    try {
+      const response = await fetch(
+        `${process.env.RAG_SERVICE_URL || 'http://rag-service:8000'}/reset-chroma`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user.id,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new ServiceUnavailableException(
+          `RAG service returned ${response.status}: ${errorText}`,
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof ServiceUnavailableException) {
+        throw error;
+      }
+
+      throw new ServiceUnavailableException(
+        `Failed to reset ChromaDB: ${
+          error instanceof Error ? error.message : 'unknown error'
+        }`,
+      );
+    }
   }
 }
