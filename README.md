@@ -411,9 +411,9 @@ See the `LICENSE` file for the full license text.
 
 Fullstack Developer | AI & Cybersecurity Enthusiast
 
-- GitHub: `https://github.com/ewen1507`
-- LinkedIn: `https://www.linkedin.com/in/ewen-emeraud/`
-- Malt: `https://www.malt.fr/profile/ewenemeraud`
+- GitHub: [ewen1507](https://github.com/ewen1507)
+- LinkedIn: [Ewen Emeraud](https://www.linkedin.com/in/ewen-emeraud/)
+- Malt: [Ewen Emeraud](https://www.malt.fr/profile/ewenemeraud)
 
 ---
 
