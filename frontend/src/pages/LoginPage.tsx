@@ -20,7 +20,7 @@ export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
         try {
             const data = await login(email, password);
 
-            const token = data.access_token || data.token;
+            const token = data.accessToken;
 
             if (!token) {
                 throw new Error("No token returned by backend");
@@ -34,7 +34,7 @@ export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted">
+        <div className="flex min-h-screen items-center justify-center bg-transparent">
             <Card className="w-full max-w-md p-6 space-y-4">
                 <div>
                     <h1 className="text-2xl font-bold">ForgeRAG</h1>
