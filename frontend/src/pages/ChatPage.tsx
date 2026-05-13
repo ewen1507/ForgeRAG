@@ -168,17 +168,6 @@ export default function ChatPage({ token, onLogout }: ChatPageProps) {
                 </div>
             </ScrollArea>
 
-            <div className="p-4 flex justify-between items-center">
-                {/* Bouton d'upload avec le spinner */}
-                <Button onClick={handleFileUpload} disabled={loading}>
-                    {loading ? (
-                        <Spinner className="animate-spin" size="sm" /> // Affichage du spinner
-                    ) : (
-                        "Upload File"
-                    )}
-                </Button>
-            </div>
-
             {/* Section d'upload avec le composant FileUpload */}
             <div className="p-4">
                 <FileUpload
@@ -223,6 +212,16 @@ export default function ChatPage({ token, onLogout }: ChatPageProps) {
 
             <div style={{ display: "flex", width: "100%" }}>
                 <ResetChromaButton />
+                <div className="p-4 flex justify-between items-center">
+                    {/* Bouton d'upload avec le spinner */}
+                    <Button onClick={handleFileUpload} disabled={loading}>
+                        {loading ? (
+                            <Spinner className="animate-spin" size="sm" /> // Affichage du spinner
+                        ) : (
+                            "Upload File"
+                        )}
+                    </Button>
+                </div>
                 <div style={{ flexGrow: 1 }}>
                     <ChatInput onSend={sendMessage} disabled={loading} />
                 </div>
