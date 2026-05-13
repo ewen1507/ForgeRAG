@@ -1,7 +1,11 @@
-MIT License
+## License
 
-Copyright (c) 2026 Ewen Emeraud
+ForgeRAG is released under the PolyForm Noncommercial License 1.0.0.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
+You may use, study, modify and contribute to this project for non-commercial purposes.
+
+Commercial use is not allowed without explicit written permission from the author.
+
+For commercial licensing, please contact: ewen.emeraud@epitech.eu
+
+The license applies only to the ForgeRAG source code. Uploaded documents, external models, embeddings, and user data remain under their respective ownership or licenses.
