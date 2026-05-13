@@ -419,4 +419,5 @@ Fullstack Developer | AI & Cybersecurity Enthusiast
 
 ## 📸 Screenshot
 
-![ForgeRAG UI](screenshots/forge-rag-chat.png)
+![ForgeRAG UI](screenshots/ForgeRagShotsLP.png)
+![ForgeRAG Chat](screenshots/ForgeRagShotsChat.png)
